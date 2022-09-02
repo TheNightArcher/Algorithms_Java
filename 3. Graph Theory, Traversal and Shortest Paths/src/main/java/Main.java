@@ -61,8 +61,8 @@ public class Main {
             components.get(components.size() - 1).offer(node);
 
             for (int child : graph.get(node)) {
-                if (!visited[child]){
-                    visited[child] =true;
+                if (!visited[child]) {
+                    visited[child] = true;
                     queue.offer(child);
                 }
             }
@@ -80,6 +80,34 @@ public class Main {
     }
 
     public static Collection<String> topSort(Map<String, List<String>> graph) {
-        throw new AssertionError("Not Implemented");
+        List<String> sorted = new ArrayList<>();
+
+        Set<String> visited = new HashSet<>();
+        Set<String> detectCycles = new HashSet<>();
+
+        for (Map.Entry<String, List<String>> node : graph.entrySet()) {
+            dfsSort(node.getKey(), visited, graph, sorted, detectCycles);
+        }
+        Collections.reverse(sorted);
+
+        return sorted;
+    }
+
+    private static void dfsSort(String key, Set<String> visited, Map<String, List<String>> graph, List<String> sorted, Set<String> detectCycles) {
+        if (detectCycles.contains(key)) {
+            throw new IllegalStateException();
+        }
+        if (!visited.contains(key)) {
+            visited.add(key);
+            detectCycles.add(key);
+
+            for (String child : graph.get(key)) {
+                if (!visited.contains(child)) {
+                    dfsSort(child, visited, graph, sorted, detectCycles);
+                }
+            }
+            detectCycles.remove(key);
+            sorted.add(key);
+        }
     }
 }
